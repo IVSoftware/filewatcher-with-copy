@@ -32,12 +32,14 @@ namespace filewatcher_with_copy
             {
                 Path = savedGamesPath,
                 IncludeSubdirectories = false,
+                SynchronizingObject = this, // But it seems to complain if not Invoked "anyway"
             };
             _fileSystemWatcher.Created += onCreated;
             _fileSystemWatcher.Changed += onChanged;
             _fileSystemWatcher.Deleted += onDeleted;
             _fileSystemWatcher.EnableRaisingEvents = true;
         }
+        FileSystemWatcher _fileSystemWatcher;
         private readonly string savedGamesPath;
 
         private void onCreated(object sender, FileSystemEventArgs e)
@@ -108,7 +110,6 @@ namespace filewatcher_with_copy
                 richTextBox1.AppendText($"Deleted: {e.FullPath}{Environment.NewLine}", Color.LightSalmon);
             });
         }
-        FileSystemWatcher _fileSystemWatcher;
 
 
         // In MainForm.Designer.cs
