@@ -25,10 +25,6 @@ namespace filewatcher_with_copy
             Directory.CreateDirectory(savedGamesPath);
 
             _fileSystemWatcher.Path = savedGamesPath;
-            _fileSystemWatcher.IncludeSubdirectories = false;
-            _fileSystemWatcher.Created += onCreated;
-            _fileSystemWatcher.Changed += onChanged;
-            _fileSystemWatcher.Deleted += onDeleted;
         }
         private readonly string savedGamesPath;
 

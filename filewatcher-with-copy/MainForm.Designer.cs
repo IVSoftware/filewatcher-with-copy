@@ -47,8 +47,12 @@ namespace filewatcher_with_copy
             // 
             // _fileSystemWatcherA
             // 
-            this._fileSystemWatcher.EnableRaisingEvents = true;
             this._fileSystemWatcher.SynchronizingObject = this;
+            this._fileSystemWatcher.IncludeSubdirectories = false;
+            this._fileSystemWatcher.Created += onCreated;
+            this._fileSystemWatcher.Changed += onChanged;
+            this._fileSystemWatcher.Deleted += onDeleted;
+            this._fileSystemWatcher.EnableRaisingEvents = true;
             // 
             // MainForm
             // 
