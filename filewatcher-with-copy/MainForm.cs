@@ -23,16 +23,12 @@ namespace filewatcher_with_copy
             } // ===============================
 
             Directory.CreateDirectory(savedGamesPath);
-            _fileSystemWatcher = new FileSystemWatcher()
-            {
-                Path = savedGamesPath,
-                IncludeSubdirectories = false,
-                SynchronizingObject = this,
-            };
+
+            _fileSystemWatcher.Path = savedGamesPath;
+            _fileSystemWatcher.IncludeSubdirectories = false;
             _fileSystemWatcher.Created += onCreated;
             _fileSystemWatcher.Changed += onChanged;
             _fileSystemWatcher.Deleted += onDeleted;
-            _fileSystemWatcher.EnableRaisingEvents = true;
         }
         private readonly string savedGamesPath;
 
@@ -92,7 +88,6 @@ namespace filewatcher_with_copy
         {
             richTextBox1.AppendText($"Deleted: {e.FullPath}{Environment.NewLine}", Color.LightSalmon);
         }
-        FileSystemWatcher _fileSystemWatcher;
 
 
         // In MainForm.Designer.cs

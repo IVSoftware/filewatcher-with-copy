@@ -18,6 +18,8 @@ namespace filewatcher_with_copy
         {
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonNewGame = new System.Windows.Forms.Button();
+            this._fileSystemWatcher = new System.IO.FileSystemWatcher();
+            ((System.ComponentModel.ISupportInitialize)(this._fileSystemWatcher)).BeginInit();
             this.SuspendLayout();
             // 
             // richTextBox1
@@ -43,6 +45,11 @@ namespace filewatcher_with_copy
             this.buttonNewGame.UseVisualStyleBackColor = true;
             this.buttonNewGame.Click += new System.EventHandler(this.buttonNewGame_Click);
             // 
+            // _fileSystemWatcherA
+            // 
+            this._fileSystemWatcher.EnableRaisingEvents = true;
+            this._fileSystemWatcher.SynchronizingObject = this;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -52,6 +59,7 @@ namespace filewatcher_with_copy
             this.Controls.Add(this.richTextBox1);
             this.Name = "MainForm";
             this.Text = "Main Form";
+            ((System.ComponentModel.ISupportInitialize)(this._fileSystemWatcher)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -60,6 +68,7 @@ namespace filewatcher_with_copy
 
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button buttonNewGame;
+        private System.IO.FileSystemWatcher _fileSystemWatcher;
     }
 }
 
