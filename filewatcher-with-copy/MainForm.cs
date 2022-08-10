@@ -42,7 +42,7 @@ namespace filewatcher_with_copy
 
         private void onCreated(object sender, FileSystemEventArgs e)
         {
-            if(Directory.Exists(e.FullPath))
+            if (Directory.Exists(e.FullPath))
             {
                 Invoke((MethodInvoker)delegate
                 {
@@ -52,42 +52,41 @@ namespace filewatcher_with_copy
                 });
                 return; // this is a directory, not a file.
             }
-            if (Path.GetDirectoryName(e.FullPath).Equals(savedGamesPath))
+            Debug.Assert(Path.GetDirectoryName(e.FullPath).Equals(savedGamesPath), "Expecting none other");
+
+            var fiSrce = new FileInfo(e.FullPath);
+
+            string folderName = Path.Combine(
+                savedGamesPath,
+                $"Save Game {fiSrce.CreationTime.ToString("dddd, dd MMMM yyyy")}");
+            // Harmless if already exists
+            Directory.CreateDirectory(folderName);
+
+            string destFile = Path.Combine(folderName, e.Name);
+
+            File.Copy(e.FullPath, destFile);
+            Debug.Assert(
+                fiSrce.CreationTime.Equals(fiSrce.LastWriteTime),
+                "Expecting matching CreationTime"
+            );
+
+            var fiDest = new FileInfo(destFile);
+            Debug.Assert(
+                !fiSrce.CreationTime.Equals(fiDest.CreationTime),
+                "Expecting different CreationTime"
+            );
+            fiDest.CreationTime = fiSrce.CreationTime;
+            fiDest.LastWriteTime = fiSrce.LastWriteTime;
+            Debug.Assert(
+                fiSrce.CreationTime.Equals(fiDest.CreationTime),
+                "Expecting matching CreationTime"
+            );
+
+            Invoke((MethodInvoker)delegate
             {
-                var fiSrce = new FileInfo(e.FullPath);
-
-                string folderName = Path.Combine(
-                    savedGamesPath,
-                    $"Save Game {fiSrce.CreationTime.ToString("dddd, dd MMMM yyyy")}");
-                // Harmless if already exists
-                Directory.CreateDirectory(folderName);
-
-                string destFile = Path.Combine(folderName, e.Name);
-                
-                File.Copy(e.FullPath, destFile);
-                Debug.Assert(
-                    fiSrce.CreationTime.Equals(fiSrce.LastWriteTime),
-                    "Expecting matching CreationTime"
-                );
-
-                var fiDest = new FileInfo(destFile);
-                Debug.Assert(
-                    !fiSrce.CreationTime.Equals(fiDest.CreationTime),
-                    "Expecting different CreationTime"
-                );
-                fiDest.CreationTime = fiSrce.CreationTime;
-                fiDest.LastWriteTime = fiSrce.LastWriteTime;
-                Debug.Assert(
-                    fiSrce.CreationTime.Equals(fiDest.CreationTime),
-                    "Expecting matching CreationTime"
-                );
-
-                Invoke((MethodInvoker)delegate
-                {
-                    richTextBox1.AppendText($"Created: {e.FullPath}", Color.GreenYellow, newLine: false);
-                    richTextBox1.AppendText($" On: {fiSrce.CreationTime}", Color.Yellow);
-                });
-            }
+                richTextBox1.AppendText($"Created: {e.FullPath}", Color.GreenYellow, newLine: false);
+                richTextBox1.AppendText($" On: {fiSrce.CreationTime}", Color.Yellow);
+            });
         }
 
         private void onChanged(object sender, FileSystemEventArgs e)
