@@ -28,7 +28,6 @@ namespace filewatcher_with_copy
             // ===============================
 
             Directory.CreateDirectory(savedGamesPath);
-            _saveFileDialog = new SaveFileDialog { InitialDirectory = savedGamesPath };
             _fileSystemWatcher = new FileSystemWatcher()
             {
                 Path = savedGamesPath,
@@ -55,17 +54,17 @@ namespace filewatcher_with_copy
             }
             if (Path.GetDirectoryName(e.FullPath).Equals(savedGamesPath))
             {
+                var fiSrce = new FileInfo(e.FullPath);
+
                 string folderName = Path.Combine(
                     savedGamesPath,
-                    $"Save Game {DateTime.Now.ToString("dddd, dd MMMM yyyy")}");
+                    $"Save Game {fiSrce.CreationTime.ToString("dddd, dd MMMM yyyy")}");
                 // Harmless if already exists
                 Directory.CreateDirectory(folderName);
 
                 string destFile = Path.Combine(folderName, e.Name);
                 
                 File.Copy(e.FullPath, destFile);
-
-                var fiSrce = new FileInfo(e.FullPath);
                 Debug.Assert(
                     fiSrce.CreationTime.Equals(fiSrce.LastWriteTime),
                     "Expecting matching CreationTime"
@@ -112,15 +111,6 @@ namespace filewatcher_with_copy
         }
         FileSystemWatcher _fileSystemWatcher;
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if(DialogResult.Cancel != _saveFileDialog.ShowDialog())
-            {
-                // File.WriteAllText(_saveFileDialog.FileName, "Hello");
-            }
-        }
-        SaveFileDialog _saveFileDialog;
-
 
         // In MainForm.Designer.cs
         protected override void Dispose(bool disposing)
@@ -131,7 +121,6 @@ namespace filewatcher_with_copy
                 {
                     components.Dispose();
                 }
-                _saveFileDialog.Dispose();
                 _fileSystemWatcher.Dispose();
             }
             base.Dispose(disposing);
@@ -141,7 +130,7 @@ namespace filewatcher_with_copy
         private void buttonNewGame_Click(object sender, EventArgs e)
         {
             _gameCount++;
-            var gamePrimary = Path.Combine(savedGamesPath, $"Game{_gameCount}");
+            var gamePrimary = Path.Combine(savedGamesPath, $"Game{_gameCount}.game");
             File.WriteAllText(gamePrimary, String.Empty);
         }
     }
