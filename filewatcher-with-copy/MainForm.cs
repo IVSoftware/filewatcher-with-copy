@@ -24,14 +24,17 @@ namespace filewatcher_with_copy
                 "filewatcher_with_copy"
             );
             // Start with clean slate for test
-            Directory.Delete(savedGamesPath, recursive: true);
-            // ===============================
+            if (Directory.Exists(savedGamesPath))
+            {
+                Directory.Delete(savedGamesPath, recursive: true);
+            } // ===============================
 
             Directory.CreateDirectory(savedGamesPath);
             _fileSystemWatcher = new FileSystemWatcher()
             {
                 Path = savedGamesPath,
                 IncludeSubdirectories = false,
+                SynchronizingObject = this,
             };
             _fileSystemWatcher.Created += onCreated;
             _fileSystemWatcher.Changed += onChanged;
@@ -44,12 +47,9 @@ namespace filewatcher_with_copy
         {
             if (Directory.Exists(e.FullPath))
             {
-                Invoke((MethodInvoker)delegate
-                {
-                    var fiCopy = new FileInfo(e.FullPath);
-                    richTextBox1.AppendText($"Created Directory: {e.FullPath}", Color.LightCoral, newLine: false);
-                    richTextBox1.AppendText($" On: {fiCopy.CreationTime}", Color.Yellow);
-                });
+                var fiCopy = new FileInfo(e.FullPath);
+                richTextBox1.AppendText($"Created Directory: {e.FullPath}", Color.LightCoral, newLine: false);
+                richTextBox1.AppendText($" On: {fiCopy.CreationTime}", Color.Yellow);
                 return; // this is a directory, not a file.
             }
             Debug.Assert(Path.GetDirectoryName(e.FullPath).Equals(savedGamesPath), "Expecting none other");
@@ -82,11 +82,8 @@ namespace filewatcher_with_copy
                 "Expecting matching CreationTime"
             );
 
-            Invoke((MethodInvoker)delegate
-            {
-                richTextBox1.AppendText($"Created: {e.FullPath}", Color.GreenYellow, newLine: false);
-                richTextBox1.AppendText($" On: {fiSrce.CreationTime}", Color.Yellow);
-            });
+            richTextBox1.AppendText($"Created: {e.FullPath}", Color.GreenYellow, newLine: false);
+            richTextBox1.AppendText($" On: {fiSrce.CreationTime}", Color.Yellow);
         }
 
         private void onChanged(object sender, FileSystemEventArgs e)
@@ -95,18 +92,12 @@ namespace filewatcher_with_copy
             {
                 return; // this is a directory, not a file.
             }
-            Invoke((MethodInvoker)delegate
-            {
-                richTextBox1.AppendText($"Changed: {e.FullPath}{Environment.NewLine}", Color.LightCoral);
-            });
+            richTextBox1.AppendText($"Changed: {e.FullPath}{Environment.NewLine}", Color.LightCoral);
         }
 
         private void onDeleted(object sender, FileSystemEventArgs e)
         {
-            Invoke((MethodInvoker)delegate
-            {
-                richTextBox1.AppendText($"Deleted: {e.FullPath}{Environment.NewLine}", Color.LightSalmon);
-            });
+            richTextBox1.AppendText($"Deleted: {e.FullPath}{Environment.NewLine}", Color.LightSalmon);
         }
         FileSystemWatcher _fileSystemWatcher;
 
